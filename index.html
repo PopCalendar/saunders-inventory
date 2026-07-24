@@ -1,0 +1,802 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Saunders Electric — Full Equipment Inventory Weight Chart</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Oswald:wght@400;500;600;700&family=Inter:wght@400;500;600;700&display=swap');
+
+:root {
+  --bg: #070a1a;
+  --panel: #0d1230;
+  --panel2: #0a0e27;
+  --border: #1c2450;
+  --text: #e2e6f5;
+  --muted: #7a83ad;
+  --gold: #f5d76e;
+}
+
+* { box-sizing: border-box; margin: 0; padding: 0; }
+
+body {
+  background: var(--bg);
+  background-image:
+    radial-gradient(circle at 10% 0%, rgba(60,70,140,0.15), transparent 40%),
+    radial-gradient(circle at 90% 100%, rgba(60,70,140,0.12), transparent 40%);
+  color: var(--text);
+  font-family: 'Inter', -apple-system, sans-serif;
+  min-height: 100vh;
+  padding-bottom: 60px;
+}
+
+.masthead {
+  padding: 36px 40px 24px;
+  text-align: center;
+  border-bottom: 2px solid var(--border);
+  background: linear-gradient(180deg, #0a0e27 0%, #070a1a 100%);
+}
+.masthead .brandline {
+  font-family: 'Oswald', sans-serif;
+  font-size: 12px;
+  letter-spacing: 4px;
+  color: var(--muted);
+  margin-bottom: 8px;
+}
+.masthead h1 {
+  font-family: 'Oswald', sans-serif;
+  font-weight: 700;
+  font-size: 42px;
+  letter-spacing: 2px;
+  color: var(--gold);
+  text-shadow: 0 0 30px rgba(245,215,110,0.25);
+}
+.masthead .sub {
+  margin-top: 8px;
+  color: var(--muted);
+  font-size: 14px;
+  letter-spacing: 1px;
+}
+.masthead .totals {
+  margin-top: 20px;
+  display: flex;
+  justify-content: center;
+  gap: 40px;
+  flex-wrap: wrap;
+}
+.masthead .totals .t {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+.masthead .totals .t .n {
+  font-family: 'Oswald', sans-serif;
+  font-size: 26px;
+  font-weight: 600;
+  color: #fff;
+}
+.masthead .totals .t .l {
+  font-size: 11px;
+  letter-spacing: 2px;
+  color: var(--muted);
+  margin-top: 2px;
+}
+
+/* Nav */
+.nav {
+  position: sticky;
+  top: 0;
+  z-index: 50;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  padding: 14px 24px;
+  background: rgba(7,10,26,0.96);
+  backdrop-filter: blur(6px);
+  border-bottom: 1px solid var(--border);
+  justify-content: center;
+}
+.navbtn {
+  --accent: #fff;
+  font-family: 'Oswald', sans-serif;
+  font-size: 12.5px;
+  letter-spacing: 1px;
+  color: var(--text);
+  background: var(--panel);
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  padding: 9px 14px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  transition: all 0.15s ease;
+}
+.navbtn .navnum {
+  color: var(--accent);
+  font-weight: 700;
+  opacity: 0.85;
+}
+.navbtn .navcount {
+  color: var(--muted);
+  font-size: 10.5px;
+  font-family: 'Inter', sans-serif;
+  letter-spacing: 0;
+}
+.navbtn:hover {
+  border-color: var(--accent);
+  box-shadow: 0 0 14px rgba(var(--accentrgb,255,255,255),0.15);
+}
+.navbtn.active {
+  background: rgba(var(--accentrgb,255,255,255),0.12);
+  border-color: var(--accent);
+  color: #fff;
+}
+
+.container { max-width: 1400px; margin: 0 auto; padding: 28px 24px; }
+
+.page { display: none; }
+.page.active { display: block; animation: fadein 0.25s ease; }
+@keyframes fadein { from { opacity: 0; transform: translateY(6px);} to {opacity:1; transform: translateY(0);} }
+
+.page-head {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
+  flex-wrap: wrap;
+  gap: 16px;
+  border: 1px solid var(--accent);
+  border-radius: 10px;
+  padding: 18px 24px;
+  margin-bottom: 18px;
+  background: linear-gradient(135deg, rgba(var(--accentrgb),0.10), rgba(var(--accentrgb),0.02));
+  box-shadow: 0 0 24px rgba(var(--accentrgb),0.08);
+}
+.page-head-left { display: flex; align-items: baseline; gap: 14px; }
+.page-index {
+  font-family: 'Oswald', sans-serif;
+  font-size: 13px;
+  letter-spacing: 2px;
+  color: var(--accent);
+  opacity: 0.85;
+}
+.page-head h2 {
+  font-family: 'Oswald', sans-serif;
+  font-size: 26px;
+  letter-spacing: 2px;
+  color: var(--accent);
+}
+.page-head-right { display: flex; gap: 26px; }
+.stat { display: flex; flex-direction: column; align-items: flex-end; }
+.stat-num { font-family: 'Oswald', sans-serif; font-size: 20px; font-weight: 600; color: #fff; }
+.stat-label { font-size: 10px; letter-spacing: 1.5px; color: var(--muted); margin-top: 2px; }
+
+.table-wrap {
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  overflow: hidden;
+}
+table { width: 100%; border-collapse: collapse; font-size: 13.5px; }
+thead th {
+  font-family: 'Oswald', sans-serif;
+  letter-spacing: 1px;
+  font-weight: 600;
+  font-size: 12px;
+  color: #0a0e27;
+  background: var(--accent);
+  padding: 10px 14px;
+  text-align: left;
+  border-bottom: 1px solid var(--border);
+}
+thead th .sub {
+  display: block;
+  font-family: 'Inter', sans-serif;
+  font-weight: 400;
+  font-size: 9.5px;
+  letter-spacing: 0.5px;
+  opacity: 0.75;
+  text-transform: none;
+}
+.th-item { width: 12%; }
+.th-desc { width: auto; }
+.th-weight { width: 12%; text-align: right; }
+.th-size { width: 20%; }
+.th-hamper-group, .th-road-group { text-align: center; }
+.th-hn, .th-hw, .th-rn, .th-rw { text-align: right; width: 9%; }
+
+tbody tr { border-bottom: 1px solid rgba(28,36,80,0.55); }
+tbody tr:nth-child(even) { background: rgba(255,255,255,0.018); }
+tbody tr:hover { background: rgba(var(--accentrgb),0.08); }
+tbody td { padding: 8px 14px; color: var(--text); }
+.c-item { font-family: 'Oswald', sans-serif; color: var(--accent); font-weight: 500; letter-spacing: 0.5px; }
+.c-desc { color: #d7dcf2; }
+.c-weight { text-align: right; font-family: 'Oswald', sans-serif; font-weight: 600; color: #fff; }
+.c-size { text-align: left; color: var(--muted); font-size: 12.5px; }
+.c-hn, .c-rn { text-align: right; color: var(--muted); }
+.c-hw, .c-rw { text-align: right; font-weight: 600; color: #fff; }
+
+footer {
+  text-align: center;
+  color: var(--muted);
+  font-size: 11.5px;
+  padding: 30px 20px 10px;
+  letter-spacing: 0.5px;
+}
+footer .warn { color: #f59e0b; margin-top: 4px; }
+
+/* Print */
+@media print {
+  .nav { display: none; }
+  body { background: #070a1a; }
+  .page { display: block !important; page-break-after: always; }
+  .page:last-child { page-break-after: auto; }
+  .container { padding: 10px 16px; }
+}
+</style>
+</head>
+<body>
+
+<div class="masthead">
+  <div class="brandline">SAUNDERS ELECTRIC &nbsp;·&nbsp; LOGISTICS &amp; LOAD PLANNING</div>
+  <h1>FULL EQUIPMENT INVENTORY WEIGHT CHART</h1>
+  <div class="sub">Item # &nbsp;·&nbsp; Description &nbsp;·&nbsp; Weight (lbs) &nbsp;·&nbsp; Size &amp; Pack Data Where Applicable</div>
+  <div class="totals">
+    <div class="t"><span class="n">364</span><span class="l">TOTAL ITEMS</span></div>
+    <div class="t"><span class="n">7</span><span class="l">CATEGORIES</span></div>
+    <div class="t"><span class="n">955,383</span><span class="l">TOTAL LBS</span></div>
+  </div>
+</div>
+
+<nav class="nav" id="nav">
+  <button class="navbtn" data-target="switches" style="--accent:#fbbf24"><span class="navnum">01</span>SWITCHES<span class="navcount">54 items</span></button><button class="navbtn" data-target="distro" style="--accent:#60a5fa"><span class="navnum">02</span>DISTRO BOXES<span class="navcount">67 items</span></button><button class="navbtn" data-target="cable" style="--accent:#4ade80"><span class="navnum">03</span>CABLE<span class="navcount">48 items</span></button><button class="navbtn" data-target="transformers" style="--accent:#c084fc"><span class="navnum">04</span>TRANSFORMERS<span class="navcount">103 items</span></button><button class="navbtn" data-target="generators" style="--accent:#fb923c"><span class="navnum">05</span>GENERATORS<span class="navcount">48 items</span></button><button class="navbtn" data-target="power" style="--accent:#22d3ee"><span class="navnum">06</span>POWER SYSTEMS<span class="navcount">14 items</span></button><button class="navbtn" data-target="misc" style="--accent:#f472b6"><span class="navnum">07</span>MISC & AC UNITS<span class="navcount">30 items</span></button>
+</nav>
+
+<div class="container" id="pages">
+  
+  <section class="page active" id="page-switches" style="--accent:#fbbf24; --accentrgb:251,191,36;">
+    <div class="page-head">
+      <div class="page-head-left">
+        <span class="page-index">01 / 07</span>
+        <h2>SWITCHES</h2>
+      </div>
+      <div class="page-head-right">
+        <div class="stat"><span class="stat-num">54</span><span class="stat-label">ITEMS</span></div>
+        <div class="stat"><span class="stat-num">15,207</span><span class="stat-label">LBS TOTAL</span></div>
+      </div>
+    </div>
+    <div class="table-wrap">
+      <table>
+        <thead>
+          <tr><th class="th-item">ITEM #</th><th class="th-desc">DESCRIPTION</th><th class="th-weight">WEIGHT<br><span class="sub">lbs</span></th></tr>
+        </thead>
+        <tbody>
+          <tr><td class="c-item">1001</td><td class="c-desc">800A 600V Switch</td><td class="c-weight">587</td></tr>
+<tr><td class="c-item">1002</td><td class="c-desc">800A 600V Switch</td><td class="c-weight">587</td></tr>
+<tr><td class="c-item">1021</td><td class="c-desc">400A 600V 3 Pole Circuit</td><td class="c-weight">214</td></tr>
+<tr><td class="c-item">1043</td><td class="c-desc">Transfer Switch 400A 600V 3 Pole</td><td class="c-weight">309</td></tr>
+<tr><td class="c-item">1044</td><td class="c-desc">Transfer Switch 400A 240V</td><td class="c-weight">293</td></tr>
+<tr><td class="c-item">1055</td><td class="c-desc">400A 600V Fused Disconnect</td><td class="c-weight">355</td></tr>
+<tr><td class="c-item">1066</td><td class="c-desc">1200A 600V 3 Pole Circuit</td><td class="c-weight">228</td></tr>
+<tr><td class="c-item">1073</td><td class="c-desc">400A 600V Double Stacked</td><td class="c-weight">459</td></tr>
+<tr><td class="c-item">1241</td><td class="c-desc">1000A 600V 3 Pole Circuit</td><td class="c-weight">358</td></tr>
+<tr><td class="c-item">1338</td><td class="c-desc">200A 240V Switch</td><td class="c-weight">95</td></tr>
+<tr><td class="c-item">1341</td><td class="c-desc">200A 240V Switch</td><td class="c-weight">95</td></tr>
+<tr><td class="c-item">1343</td><td class="c-desc">200A 600V Switch</td><td class="c-weight">197</td></tr>
+<tr><td class="c-item">1344</td><td class="c-desc">100A 600V Switch</td><td class="c-weight">93</td></tr>
+<tr><td class="c-item">1480</td><td class="c-desc">200A 600V Switch</td><td class="c-weight">197</td></tr>
+<tr><td class="c-item">1571</td><td class="c-desc">100A 240V Switch</td><td class="c-weight">93</td></tr>
+<tr><td class="c-item">1572</td><td class="c-desc">100A 600V Switch</td><td class="c-weight">93</td></tr>
+<tr><td class="c-item">1631</td><td class="c-desc">100A 240V Switch</td><td class="c-weight">95</td></tr>
+<tr><td class="c-item">1661</td><td class="c-desc">100A 600V Switch</td><td class="c-weight">93</td></tr>
+<tr><td class="c-item">1662</td><td class="c-desc">100A 600V Switch</td><td class="c-weight">93</td></tr>
+<tr><td class="c-item">1772</td><td class="c-desc">100A 250V Switch</td><td class="c-weight">93</td></tr>
+<tr><td class="c-item">1776</td><td class="c-desc">800A 600V Switch</td><td class="c-weight">587</td></tr>
+<tr><td class="c-item">1798</td><td class="c-desc">200A 240V Switch</td><td class="c-weight">113</td></tr>
+<tr><td class="c-item">1820</td><td class="c-desc">400A 600V Fused Disconnect</td><td class="c-weight">355</td></tr>
+<tr><td class="c-item">1824</td><td class="c-desc">400A 600V Fused Disconnect</td><td class="c-weight">355</td></tr>
+<tr><td class="c-item">1858</td><td class="c-desc">100A 600V</td><td class="c-weight">93</td></tr>
+<tr><td class="c-item">4532</td><td class="c-desc">Transfer Switch 400A 240V</td><td class="c-weight">293</td></tr>
+<tr><td class="c-item">11727</td><td class="c-desc">400A 600V Fused Disconnect</td><td class="c-weight">355</td></tr>
+<tr><td class="c-item">11728</td><td class="c-desc">400A 600V Fused Disconnect</td><td class="c-weight">355</td></tr>
+<tr><td class="c-item">11729</td><td class="c-desc">400A 600V Fused Disconnect</td><td class="c-weight">355</td></tr>
+<tr><td class="c-item">11956</td><td class="c-desc">400A 600V Fused Disconnect</td><td class="c-weight">355</td></tr>
+<tr><td class="c-item">11957</td><td class="c-desc">400A 600V Fused Disconnect</td><td class="c-weight">355</td></tr>
+<tr><td class="c-item">11960</td><td class="c-desc">400A 600V Fused Disconnect</td><td class="c-weight">355</td></tr>
+<tr><td class="c-item">11961</td><td class="c-desc">400A 600V Fused Disconnect</td><td class="c-weight">355</td></tr>
+<tr><td class="c-item">11962</td><td class="c-desc">400A 600V Fused Disconnect</td><td class="c-weight">355</td></tr>
+<tr><td class="c-item">11963</td><td class="c-desc">400A 600V Fused Disconnect</td><td class="c-weight">355</td></tr>
+<tr><td class="c-item">11968</td><td class="c-desc">400A 600V Fused Disconnect</td><td class="c-weight">355</td></tr>
+<tr><td class="c-item">13352</td><td class="c-desc">400A 280V Auto Trans Switch</td><td class="c-weight">294</td></tr>
+<tr><td class="c-item">13786</td><td class="c-desc">400A 280V Auto Trans Switch</td><td class="c-weight">299</td></tr>
+<tr><td class="c-item">13792</td><td class="c-desc">200A 480V Auto Trans Switch</td><td class="c-weight">187</td></tr>
+<tr><td class="c-item">43651</td><td class="c-desc">100A 600V</td><td class="c-weight">93</td></tr>
+<tr><td class="c-item">43652</td><td class="c-desc">Fused Disconnect, 100A 600V</td><td class="c-weight">95</td></tr>
+<tr><td class="c-item">47783</td><td class="c-desc">100A 240V Switch</td><td class="c-weight">93</td></tr>
+<tr><td class="c-item">50761</td><td class="c-desc">400A 600V Fused Disconnect</td><td class="c-weight">355</td></tr>
+<tr><td class="c-item">51249</td><td class="c-desc">200A 480V Auto Trans Switch</td><td class="c-weight">308</td></tr>
+<tr><td class="c-item">52514</td><td class="c-desc">400A 480V Fused Disconnect w/ Wifi Metering</td><td class="c-weight">351</td></tr>
+<tr><td class="c-item">52515</td><td class="c-desc">400A 480V Fused Disconnect w/ Wifi Metering</td><td class="c-weight">351</td></tr>
+<tr><td class="c-item">52516</td><td class="c-desc">400A 480V Fused Disconnect w/ Wifi Metering</td><td class="c-weight">351</td></tr>
+<tr><td class="c-item">52517</td><td class="c-desc">400A 480V Fused Disconnect w/ Wifi Metering</td><td class="c-weight">351</td></tr>
+<tr><td class="c-item">52518</td><td class="c-desc">400A 480V Fused Disconnect w/ Wifi Metering</td><td class="c-weight">351</td></tr>
+<tr><td class="c-item">52519</td><td class="c-desc">400A 480V Fused Disconnect w/ Wifi Metering</td><td class="c-weight">351</td></tr>
+<tr><td class="c-item">52520</td><td class="c-desc">400A 480V Fused Disconnect w/ Wifi Metering</td><td class="c-weight">351</td></tr>
+<tr><td class="c-item">52521</td><td class="c-desc">400A 480V Fused Disconnect w/ Wifi Metering</td><td class="c-weight">351</td></tr>
+<tr><td class="c-item">52522</td><td class="c-desc">400A 480V Fused Disconnect w/ Wifi Metering</td><td class="c-weight">351</td></tr>
+<tr><td class="c-item">52523</td><td class="c-desc">400A 480V Fused Disconnect w/ Wifi Metering</td><td class="c-weight">351</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+
+  <section class="page" id="page-distro" style="--accent:#60a5fa; --accentrgb:96,165,250;">
+    <div class="page-head">
+      <div class="page-head-left">
+        <span class="page-index">02 / 07</span>
+        <h2>DISTRO BOXES</h2>
+      </div>
+      <div class="page-head-right">
+        <div class="stat"><span class="stat-num">67</span><span class="stat-label">ITEMS</span></div>
+        <div class="stat"><span class="stat-num">8,598</span><span class="stat-label">LBS TOTAL</span></div>
+      </div>
+    </div>
+    <div class="table-wrap">
+      <table>
+        <thead>
+          <tr><th class="th-item">ITEM #</th><th class="th-desc">DESCRIPTION</th><th class="th-weight">WEIGHT<br><span class="sub">lbs</span></th></tr>
+        </thead>
+        <tbody>
+          <tr><td class="c-item">SNACKBOX</td><td class="c-desc">Snackbox</td><td class="c-weight">2</td></tr>
+<tr><td class="c-item">LUNCHBOX</td><td class="c-desc">Lunchbox</td><td class="c-weight">7</td></tr>
+<tr><td class="c-item">50ALUNCH</td><td class="c-desc">50A Lunchbox</td><td class="c-weight">7</td></tr>
+<tr><td class="c-item">160400ASW6</td><td class="c-desc">400 ASW 2-225A</td><td class="c-weight">56</td></tr>
+<tr><td class="c-item">160400APT</td><td class="c-desc">160-400A 3P Adj Sw Pass Thru</td><td class="c-weight">72</td></tr>
+<tr><td class="c-item">4002225ASW</td><td class="c-desc">400A Circuit Breaker W 2 225A Switches</td><td class="c-weight">72</td></tr>
+<tr><td class="c-item">4002225ASW6</td><td class="c-desc">160-400A 3P Adj Main Circuit Breaker 600V</td><td class="c-weight">56</td></tr>
+<tr><td class="c-item">CAMD26480</td><td class="c-desc">480V 2x6</td><td class="c-weight">74</td></tr>
+<tr><td class="c-item">CAMD13480</td><td class="c-desc">480V 1x3</td><td class="c-weight">28</td></tr>
+<tr><td class="c-item">50ADISBX36</td><td class="c-desc">50A Distro</td><td class="c-weight">35</td></tr>
+<tr><td class="c-item">4004X125PT</td><td class="c-desc">Pass Thru</td><td class="c-weight">72</td></tr>
+<tr><td class="c-item">30DB08</td><td class="c-desc">30A Distro 8OUT</td><td class="c-weight">40</td></tr>
+<tr><td class="c-item">30DB06</td><td class="c-desc">30A Distro 6OUT</td><td class="c-weight">40</td></tr>
+<tr><td class="c-item">30DB12</td><td class="c-desc">30A Distro 12OUT</td><td class="c-weight">40</td></tr>
+<tr><td class="c-item">160400APT</td><td class="c-desc">400 ADJ SW</td><td class="c-weight">60</td></tr>
+<tr><td class="c-item">CAMD44480</td><td class="c-desc">4X4</td><td class="c-weight">75</td></tr>
+<tr><td class="c-item">RVMINIBOX</td><td class="c-desc">RV Minibox</td><td class="c-weight">6</td></tr>
+<tr><td class="c-item">30ASATBOX</td><td class="c-desc">30A Satellite Box</td><td class="c-weight">8</td></tr>
+<tr><td class="c-item">3050PTHRU</td><td class="c-desc">Distro Box 30/50 Combo Pass Thru</td><td class="c-weight">72</td></tr>
+<tr><td class="c-item">3050PTHRU</td><td class="c-desc">Distro Panel 30/50 Combo Pass Thru</td><td class="c-weight">—</td></tr>
+<tr><td class="c-item">1125</td><td class="c-desc">30/50A Combo Panel</td><td class="c-weight">180</td></tr>
+<tr><td class="c-item">1126</td><td class="c-desc">30/50A Combo Panel</td><td class="c-weight">180</td></tr>
+<tr><td class="c-item">1165</td><td class="c-desc">30/50A Combo Panel</td><td class="c-weight">180</td></tr>
+<tr><td class="c-item">1235</td><td class="c-desc">PBG 12 Plug Panel</td><td class="c-weight">322</td></tr>
+<tr><td class="c-item">1243</td><td class="c-desc">Challenger Distro</td><td class="c-weight">190</td></tr>
+<tr><td class="c-item">1248</td><td class="c-desc">PBG25 Plug Panel</td><td class="c-weight">91</td></tr>
+<tr><td class="c-item">1280</td><td class="c-desc">30A Distro Panel</td><td class="c-weight">164</td></tr>
+<tr><td class="c-item">1303</td><td class="c-desc">30A Distro Panel</td><td class="c-weight">164</td></tr>
+<tr><td class="c-item">1305</td><td class="c-desc">30A Distro Panel</td><td class="c-weight">113</td></tr>
+<tr><td class="c-item">1307</td><td class="c-desc">30A Distro Panel</td><td class="c-weight">164</td></tr>
+<tr><td class="c-item">1471</td><td class="c-desc">30A Distro Panel</td><td class="c-weight">113</td></tr>
+<tr><td class="c-item">1474</td><td class="c-desc">30A Distro Panel</td><td class="c-weight">164</td></tr>
+<tr><td class="c-item">1475</td><td class="c-desc">30/50A Combo Panel</td><td class="c-weight">167</td></tr>
+<tr><td class="c-item">1477</td><td class="c-desc">30/50A Combo Panel</td><td class="c-weight">180</td></tr>
+<tr><td class="c-item">1714</td><td class="c-desc">Projections Distro</td><td class="c-weight">165</td></tr>
+<tr><td class="c-item">1728</td><td class="c-desc">30A Distro Panel</td><td class="c-weight">164</td></tr>
+<tr><td class="c-item">1757</td><td class="c-desc">50A Distro Panel, 3/0 Twist</td><td class="c-weight">179</td></tr>
+<tr><td class="c-item">1808</td><td class="c-desc">30A Distro Panel</td><td class="c-weight">164</td></tr>
+<tr><td class="c-item">1809</td><td class="c-desc">30A Distro Panel</td><td class="c-weight">164</td></tr>
+<tr><td class="c-item">1813</td><td class="c-desc">30A Distro Panel</td><td class="c-weight">164</td></tr>
+<tr><td class="c-item">1816</td><td class="c-desc">800A 600V Distro Panel</td><td class="c-weight">170</td></tr>
+<tr><td class="c-item">1827</td><td class="c-desc">30A Distro Panel</td><td class="c-weight">164</td></tr>
+<tr><td class="c-item">1828</td><td class="c-desc">30A Distro Panel</td><td class="c-weight">164</td></tr>
+<tr><td class="c-item">1875</td><td class="c-desc">30A Distro Panel</td><td class="c-weight">113</td></tr>
+<tr><td class="c-item">1938</td><td class="c-desc">Load Center 225A 480/277V</td><td class="c-weight">160</td></tr>
+<tr><td class="c-item">1946</td><td class="c-desc">50A Distro Panel</td><td class="c-weight">179</td></tr>
+<tr><td class="c-item">1947</td><td class="c-desc">50A Distro Panel, 3/0 Twist</td><td class="c-weight">166</td></tr>
+<tr><td class="c-item">4983</td><td class="c-desc">Projections Distro</td><td class="c-weight">165</td></tr>
+<tr><td class="c-item">11526</td><td class="c-desc">Cam Distro 1500A 208V 2 in 6</td><td class="c-weight">204</td></tr>
+<tr><td class="c-item">12283</td><td class="c-desc">Cam Distro 1500A 208V 2 in 6</td><td class="c-weight">204</td></tr>
+<tr><td class="c-item">12286</td><td class="c-desc">Cam Distro 1500A 208V 2 in 6</td><td class="c-weight">204</td></tr>
+<tr><td class="c-item">12325</td><td class="c-desc">Cam Distro 1500A 208V 2 in 6</td><td class="c-weight">204</td></tr>
+<tr><td class="c-item">12362</td><td class="c-desc">Cam Distro 1500A 208V 2 in 6</td><td class="c-weight">204</td></tr>
+<tr><td class="c-item">12363</td><td class="c-desc">Cam Distro 1500A 208V 2 in 6</td><td class="c-weight">204</td></tr>
+<tr><td class="c-item">46920</td><td class="c-desc">Port Emon Demon 400A480V</td><td class="c-weight">131</td></tr>
+<tr><td class="c-item">46922</td><td class="c-desc">Port Emon Demon 400A480V</td><td class="c-weight">131</td></tr>
+<tr><td class="c-item">47048</td><td class="c-desc">30/50A Combo Panel</td><td class="c-weight">167</td></tr>
+<tr><td class="c-item">52027</td><td class="c-desc">400A 4x125 Distro</td><td class="c-weight">147</td></tr>
+<tr><td class="c-item">52028</td><td class="c-desc">400A 4x125 Distro</td><td class="c-weight">147</td></tr>
+<tr><td class="c-item">52029</td><td class="c-desc">400A 4x125 Distro</td><td class="c-weight">147</td></tr>
+<tr><td class="c-item">52030</td><td class="c-desc">400A 4x125 Distro</td><td class="c-weight">147</td></tr>
+<tr><td class="c-item">52031</td><td class="c-desc">400A 4x125 Distro</td><td class="c-weight">147</td></tr>
+<tr><td class="c-item">52032</td><td class="c-desc">400A 4x125 Distro</td><td class="c-weight">147</td></tr>
+<tr><td class="c-item">52510</td><td class="c-desc">400A 4x125 Distro</td><td class="c-weight">147</td></tr>
+<tr><td class="c-item">52511</td><td class="c-desc">400A 4x125 Distro</td><td class="c-weight">147</td></tr>
+<tr><td class="c-item">52512</td><td class="c-desc">400A 4x125 Distro</td><td class="c-weight">147</td></tr>
+<tr><td class="c-item">52513</td><td class="c-desc">400A 4x125 Distro</td><td class="c-weight">147</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+
+  <section class="page" id="page-cable" style="--accent:#4ade80; --accentrgb:74,222,128;">
+    <div class="page-head">
+      <div class="page-head-left">
+        <span class="page-index">03 / 07</span>
+        <h2>CABLE</h2>
+      </div>
+      <div class="page-head-right">
+        <div class="stat"><span class="stat-num">48</span><span class="stat-label">ITEMS</span></div>
+        <div class="stat"><span class="stat-num">894</span><span class="stat-label">LBS TOTAL</span></div>
+      </div>
+    </div>
+    <div class="table-wrap">
+      <table>
+        <thead>
+          <tr><th class="th-item" rowspan="2">ITEM #</th><th class="th-desc" rowspan="2">DESCRIPTION</th><th class="th-weight" rowspan="2">WEIGHT<br><span class="sub">lbs each</span></th><th class="th-hamper-group" colspan="2">HAMPER</th><th class="th-road-group" colspan="2">ROAD PACK</th></tr><tr><th class="th-hn">#&nbsp;per</th><th class="th-hw">Total&nbsp;Wt</th><th class="th-rn">#&nbsp;per</th><th class="th-rw">Total&nbsp;Wt</th></tr>
+        </thead>
+        <tbody>
+          <tr><td class="c-item">CAM40100CC</td><td class="c-desc">100&#x27; 4/0 Cable</td><td class="c-weight">80</td><td class="c-hn">15</td><td class="c-hw">1,360</td><td class="c-rn">25</td><td class="c-rw">2,160</td></tr>
+<tr><td class="c-item">CA40050CC</td><td class="c-desc">50&#x27; 4/0 Cable</td><td class="c-weight">42</td><td class="c-hn">25</td><td class="c-hw">1,210</td><td class="c-rn">50</td><td class="c-rw">2,260</td></tr>
+<tr><td class="c-item">CA40025CC</td><td class="c-desc">25&#x27; 4/0 Cable</td><td class="c-weight">22</td><td class="c-hn">40</td><td class="c-hw">1,040</td><td class="c-rn">70</td><td class="c-rw">1,700</td></tr>
+<tr><td class="c-item">CA40015CC</td><td class="c-desc">15&#x27; 4/0 Cable</td><td class="c-weight">13</td><td class="c-hn">—</td><td class="c-hw">—</td><td class="c-rn">—</td><td class="c-rw">—</td></tr>
+<tr><td class="c-item">CA40010CC</td><td class="c-desc">10&#x27; 4/0 Cable</td><td class="c-weight">8</td><td class="c-hn">—</td><td class="c-hw">—</td><td class="c-rn">—</td><td class="c-rw">—</td></tr>
+<tr><td class="c-item">CA5BND100</td><td class="c-desc">100&#x27; Banded Cable</td><td class="c-weight">144</td><td class="c-hn">6</td><td class="c-hw">1,024</td><td class="c-rn">8</td><td class="c-rw">1,305</td></tr>
+<tr><td class="c-item">CA5BND050</td><td class="c-desc">50&#x27; Banded Cable</td><td class="c-weight">81</td><td class="c-hn">15</td><td class="c-hw">1,375</td><td class="c-rn">20</td><td class="c-rw">1,773</td></tr>
+<tr><td class="c-item">CA5BND025</td><td class="c-desc">25&#x27; Banded Cable</td><td class="c-weight">40</td><td class="c-hn">—</td><td class="c-hw">—</td><td class="c-rn">—</td><td class="c-rw">—</td></tr>
+<tr><td class="c-item">CA5BND015</td><td class="c-desc">15&#x27; Banded Cable</td><td class="c-weight">28</td><td class="c-hn">—</td><td class="c-hw">—</td><td class="c-rn">—</td><td class="c-rw">—</td></tr>
+<tr><td class="c-item">CA5BND010</td><td class="c-desc">10&#x27; Banded Cable</td><td class="c-weight">20</td><td class="c-hn">—</td><td class="c-hw">—</td><td class="c-rn">—</td><td class="c-rw">—</td></tr>
+<tr><td class="c-item">50A1O100</td><td class="c-desc">100&#x27; 50A Cable</td><td class="c-weight">61</td><td class="c-hn">15</td><td class="c-hw">1,075</td><td class="c-rn">—</td><td class="c-rw">—</td></tr>
+<tr><td class="c-item">50A1O050</td><td class="c-desc">50&#x27; 50A Cable</td><td class="c-weight">32</td><td class="c-hn">25</td><td class="c-hw">960</td><td class="c-rn">—</td><td class="c-rw">—</td></tr>
+<tr><td class="c-item">50A1O025</td><td class="c-desc">25&#x27; 50A Cable</td><td class="c-weight">16</td><td class="c-hn">—</td><td class="c-hw">—</td><td class="c-rn">—</td><td class="c-rw">—</td></tr>
+<tr><td class="c-item">50A1O010</td><td class="c-desc">10&#x27; 50A Cable</td><td class="c-weight">8</td><td class="c-hn">—</td><td class="c-hw">—</td><td class="c-rn">—</td><td class="c-rw">—</td></tr>
+<tr><td class="c-item">L2130100</td><td class="c-desc">100&#x27; 30A Cable</td><td class="c-weight">43</td><td class="c-hn">15</td><td class="c-hw">805</td><td class="c-rn">—</td><td class="c-rw">—</td></tr>
+<tr><td class="c-item">L2130050</td><td class="c-desc">50&#x27; 30A Cable</td><td class="c-weight">21</td><td class="c-hn">25</td><td class="c-hw">685</td><td class="c-rn">—</td><td class="c-rw">—</td></tr>
+<tr><td class="c-item">L2130025</td><td class="c-desc">25&#x27; 30A Cable</td><td class="c-weight">10</td><td class="c-hn">—</td><td class="c-hw">—</td><td class="c-rn">—</td><td class="c-rw">—</td></tr>
+<tr><td class="c-item">L2130010</td><td class="c-desc">10&#x27; 30A Cable</td><td class="c-weight">6</td><td class="c-hn">—</td><td class="c-hw">—</td><td class="c-rn">—</td><td class="c-rw">—</td></tr>
+<tr><td class="c-item">L2130FL025</td><td class="c-desc">25&#x27; 30A Flat Cable</td><td class="c-weight">10</td><td class="c-hn">—</td><td class="c-hw">—</td><td class="c-rn">—</td><td class="c-rw">—</td></tr>
+<tr><td class="c-item">L2130FL050</td><td class="c-desc">50&#x27; 30A Flat Cable</td><td class="c-weight">21</td><td class="c-hn">—</td><td class="c-hw">—</td><td class="c-rn">—</td><td class="c-rw">—</td></tr>
+<tr><td class="c-item">50AFL1O010</td><td class="c-desc">10&#x27; 50A Flat Cable</td><td class="c-weight">8</td><td class="c-hn">—</td><td class="c-hw">—</td><td class="c-rn">—</td><td class="c-rw">—</td></tr>
+<tr><td class="c-item">50AFL10050</td><td class="c-desc">50&#x27; 50A Flat Cable</td><td class="c-weight">32</td><td class="c-hn">—</td><td class="c-hw">—</td><td class="c-rn">—</td><td class="c-rw">—</td></tr>
+<tr><td class="c-item">30AORCHSTR</td><td class="c-desc">30A Orchestra Stringers</td><td class="c-weight">23</td><td class="c-hn">—</td><td class="c-hw">—</td><td class="c-rn">—</td><td class="c-rw">—</td></tr>
+<tr><td class="c-item">EDEXT025</td><td class="c-desc">25&#x27; Edison Extension</td><td class="c-weight">2</td><td class="c-hn">—</td><td class="c-hw">—</td><td class="c-rn">—</td><td class="c-rw">—</td></tr>
+<tr><td class="c-item">EDEXT050</td><td class="c-desc">50&#x27; Edison Extension</td><td class="c-weight">4</td><td class="c-hn">—</td><td class="c-hw">—</td><td class="c-rn">—</td><td class="c-rw">—</td></tr>
+<tr><td class="c-item">EDEXT100</td><td class="c-desc">100&#x27; Edison Extension</td><td class="c-weight">8</td><td class="c-hn">—</td><td class="c-hw">—</td><td class="c-rn">—</td><td class="c-rw">—</td></tr>
+<tr><td class="c-item">TURNF</td><td class="c-desc">CAM Turnaround F to F</td><td class="c-weight">2</td><td class="c-hn">—</td><td class="c-hw">—</td><td class="c-rn">—</td><td class="c-rw">—</td></tr>
+<tr><td class="c-item">TURNM</td><td class="c-desc">CAM Turnaround M to M</td><td class="c-weight">2</td><td class="c-hn">—</td><td class="c-hw">—</td><td class="c-rn">—</td><td class="c-rw">—</td></tr>
+<tr><td class="c-item">T-FFM</td><td class="c-desc">CAM Parallel T (FFM)</td><td class="c-weight">2</td><td class="c-hn">—</td><td class="c-hw">—</td><td class="c-rn">—</td><td class="c-rw">—</td></tr>
+<tr><td class="c-item">T-MMF</td><td class="c-desc">CAM Parallel T (MMF)</td><td class="c-weight">2</td><td class="c-hn">—</td><td class="c-hw">—</td><td class="c-rn">—</td><td class="c-rw">—</td></tr>
+<tr><td class="c-item">50AM-30ARV</td><td class="c-desc">50A Hubbell to 2-30A RV Outputs</td><td class="c-weight">3</td><td class="c-hn">—</td><td class="c-hw">—</td><td class="c-rn">—</td><td class="c-rw">—</td></tr>
+<tr><td class="c-item">50AM-50ARV</td><td class="c-desc">50A Male Hubbell to 50A Female RV Adapter</td><td class="c-weight">3</td><td class="c-hn">—</td><td class="c-hw">—</td><td class="c-rn">—</td><td class="c-rw">—</td></tr>
+<tr><td class="c-item">FCBE2</td><td class="c-desc">#2 Fem Cam to Bare End</td><td class="c-weight">4</td><td class="c-hn">—</td><td class="c-hw">—</td><td class="c-rn">—</td><td class="c-rw">—</td></tr>
+<tr><td class="c-item">FCBE40</td><td class="c-desc">4/0 Fem Cam to Bare End</td><td class="c-weight">4</td><td class="c-hn">—</td><td class="c-hw">—</td><td class="c-rn">—</td><td class="c-rw">—</td></tr>
+<tr><td class="c-item">FCSL40</td><td class="c-desc">4/0 Fem Cam to Sister Lug</td><td class="c-weight">4</td><td class="c-hn">—</td><td class="c-hw">—</td><td class="c-rn">—</td><td class="c-rw">—</td></tr>
+<tr><td class="c-item">MCSL40</td><td class="c-desc">4/0 Male Cam to Sister Lug</td><td class="c-weight">4</td><td class="c-hn">—</td><td class="c-hw">—</td><td class="c-rn">—</td><td class="c-rw">—</td></tr>
+<tr><td class="c-item">L2130-L630</td><td class="c-desc">L2130 to L630/Edison</td><td class="c-weight">5</td><td class="c-hn">—</td><td class="c-hw">—</td><td class="c-rn">—</td><td class="c-rw">—</td></tr>
+<tr><td class="c-item">L2130CHEYE</td><td class="c-desc">Male L2130 to Fem China Eye</td><td class="c-weight">4</td><td class="c-hn">—</td><td class="c-hw">—</td><td class="c-rn">—</td><td class="c-rw">—</td></tr>
+<tr><td class="c-item">MCBE2</td><td class="c-desc">#2 Male Cam to Bare End</td><td class="c-weight">4</td><td class="c-hn">—</td><td class="c-hw">—</td><td class="c-rn">—</td><td class="c-rw">—</td></tr>
+<tr><td class="c-item">MCBE40</td><td class="c-desc">4/0 Male Cam to Bare End</td><td class="c-weight">4</td><td class="c-hn">—</td><td class="c-hw">—</td><td class="c-rn">—</td><td class="c-rw">—</td></tr>
+<tr><td class="c-item">30AQUADE</td><td class="c-desc">L2130 End Quadbos</td><td class="c-weight">2</td><td class="c-hn">—</td><td class="c-hw">—</td><td class="c-rn">—</td><td class="c-rw">—</td></tr>
+<tr><td class="c-item">30AQUADPT</td><td class="c-desc">L2130 Pass Thru Quadbox</td><td class="c-weight">4</td><td class="c-hn">—</td><td class="c-hw">—</td><td class="c-rn">—</td><td class="c-rw">—</td></tr>
+<tr><td class="c-item">AD63A-MCAM</td><td class="c-desc">63A Male C Form to Cam Adapter</td><td class="c-weight">4</td><td class="c-hn">—</td><td class="c-hw">—</td><td class="c-rn">—</td><td class="c-rw">—</td></tr>
+<tr><td class="c-item">AD63A-FCAM</td><td class="c-desc">63A Female C Form to Can Adapter</td><td class="c-weight">4</td><td class="c-hn">—</td><td class="c-hw">—</td><td class="c-rn">—</td><td class="c-rw">—</td></tr>
+<tr><td class="c-item">30ABETIEIN</td><td class="c-desc">30A Male to Bare End</td><td class="c-weight">3</td><td class="c-hn">—</td><td class="c-hw">—</td><td class="c-rn">—</td><td class="c-rw">—</td></tr>
+<tr><td class="c-item">50AM2BET</td><td class="c-desc">50A Male Hubbell to Bare End Tail</td><td class="c-weight">3</td><td class="c-hn">—</td><td class="c-hw">—</td><td class="c-rn">—</td><td class="c-rw">—</td></tr>
+<tr><td class="c-item">CAPARAFEM</td><td class="c-desc">25&#x27; Female Parallell Cable</td><td class="c-weight">22</td><td class="c-hn">—</td><td class="c-hw">—</td><td class="c-rn">—</td><td class="c-rw">—</td></tr>
+<tr><td class="c-item">CAPARAMALE</td><td class="c-desc">25&#x27; Male Parallel Cable</td><td class="c-weight">22</td><td class="c-hn">—</td><td class="c-hw">—</td><td class="c-rn">—</td><td class="c-rw">—</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+
+  <section class="page" id="page-transformers" style="--accent:#c084fc; --accentrgb:192,132,252;">
+    <div class="page-head">
+      <div class="page-head-left">
+        <span class="page-index">04 / 07</span>
+        <h2>TRANSFORMERS</h2>
+      </div>
+      <div class="page-head-right">
+        <div class="stat"><span class="stat-num">103</span><span class="stat-label">ITEMS</span></div>
+        <div class="stat"><span class="stat-num">115,043</span><span class="stat-label">LBS TOTAL</span></div>
+      </div>
+    </div>
+    <div class="table-wrap">
+      <table>
+        <thead>
+          <tr><th class="th-item">ITEM #</th><th class="th-desc">DESCRIPTION</th><th class="th-weight">WEIGHT<br><span class="sub">lbs</span></th><th class="th-size">SIZE<br><span class="sub">LxWxH</span></th></tr>
+        </thead>
+        <tbody>
+          <tr><td class="c-item">1014</td><td class="c-desc">112.5KVA 480D-480Y/277</td><td class="c-weight">1,066</td><td class="c-size">51&quot;Lx26&quot;Wx53&quot;H</td></tr>
+<tr><td class="c-item">1015</td><td class="c-desc">112.5KVA 480/208YB</td><td class="c-weight">1,294</td><td class="c-size">55&quot;Lx29&quot;Wx46&quot;H</td></tr>
+<tr><td class="c-item">1017</td><td class="c-desc">75KVA 240-480/277V</td><td class="c-weight">938</td><td class="c-size">54&quot;Lx32&quot;Wx57&quot;H</td></tr>
+<tr><td class="c-item">1019</td><td class="c-desc">112.5KVA 480V-208Y/120</td><td class="c-weight">1,094</td><td class="c-size">52&quot;Lx32&quot;Wx53&quot;H</td></tr>
+<tr><td class="c-item">1027</td><td class="c-desc">15KVA 208-120/240 1P</td><td class="c-weight">300</td><td class="c-size">27&quot;Lx19&quot;Wx34&quot;H</td></tr>
+<tr><td class="c-item">1028</td><td class="c-desc">15KVA 480-120/240 1PH</td><td class="c-weight">349</td><td class="c-size">36&quot;Lx24&quot;Wx35&quot;H</td></tr>
+<tr><td class="c-item">1029</td><td class="c-desc">30KVA ISO 208-208Y/120</td><td class="c-weight">539</td><td class="c-size">44&quot;Lx25&quot;Wx40&quot;H</td></tr>
+<tr><td class="c-item">1121</td><td class="c-desc">75KVA 480V-208Y/120</td><td class="c-weight">917</td><td class="c-size">52&quot;Lx31&quot;Wx57&quot;H</td></tr>
+<tr><td class="c-item">1128</td><td class="c-desc">75KVA 480D-480Y/277V</td><td class="c-weight">798</td><td class="c-size">48&quot;Lx27&quot;Wx44&quot;H</td></tr>
+<tr><td class="c-item">1139</td><td class="c-desc">100KVA 480/240V-208Y/120</td><td class="c-weight">1,154</td><td class="c-size">61&quot;Lx32&quot;Wx51&quot;H</td></tr>
+<tr><td class="c-item">1171</td><td class="c-desc">125KVA 480-208Y</td><td class="c-weight">1,249</td><td class="c-size">55&quot;Lx29&quot;Wx28.5&quot;H</td></tr>
+<tr><td class="c-item">1172</td><td class="c-desc">75KVA 208D-208Y/120 ISO</td><td class="c-weight">1,104</td><td class="c-size">51&quot;Lx32&quot;Wx51&quot;H</td></tr>
+<tr><td class="c-item">1173</td><td class="c-desc">112.5KVA 208D-208Y/120 ISO</td><td class="c-weight">1,602</td><td class="c-size">54&quot;Lx32&quot;Wx52&quot;H</td></tr>
+<tr><td class="c-item">1240</td><td class="c-desc">25KVA ISO Single Phase</td><td class="c-weight">442</td><td class="c-size">47&quot;Lx25&quot;Wx41&quot;H</td></tr>
+<tr><td class="c-item">1262</td><td class="c-desc">112.5KVA 240D-208Y</td><td class="c-weight">1,546</td><td class="c-size">63&quot;Lx37&quot;Wx53&quot;H</td></tr>
+<tr><td class="c-item">1268</td><td class="c-desc">47KVA 480-380/220 3P</td><td class="c-weight">621</td><td class="c-size">42&quot;Lx26&quot;Wx44&quot;H</td></tr>
+<tr><td class="c-item">1282</td><td class="c-desc">7.5KVA 480-120/240 1P</td><td class="c-weight">190</td><td class="c-size">19&quot;Lx15&quot;Wx19&quot;H</td></tr>
+<tr><td class="c-item">1283</td><td class="c-desc">7.5KVA 480-120/240 1P</td><td class="c-weight">190</td><td class="c-size">19&quot;Lx15&quot;Wx19&quot;H</td></tr>
+<tr><td class="c-item">1284</td><td class="c-desc">7.5KVA 480-120/240 1P</td><td class="c-weight">190</td><td class="c-size">19&quot;Lx15&quot;Wx19&quot;H</td></tr>
+<tr><td class="c-item">1285</td><td class="c-desc">7.5KVA 480-120/240 1P</td><td class="c-weight">190</td><td class="c-size">19&quot;Lx15&quot;Wx19&quot;H</td></tr>
+<tr><td class="c-item">1286</td><td class="c-desc">7.5KVA 480-120/240 1P</td><td class="c-weight">190</td><td class="c-size">19&quot;Lx15&quot;Wx19&quot;H</td></tr>
+<tr><td class="c-item">1289</td><td class="c-desc">7.5KVA 480-120/240 1P</td><td class="c-weight">190</td><td class="c-size">19&quot;Lx15&quot;Wx19&quot;H</td></tr>
+<tr><td class="c-item">1362</td><td class="c-desc">30KVA ISO 208D-208Y/120 3P</td><td class="c-weight">541</td><td class="c-size">45&quot;Lx24&quot;Wx40&quot;H</td></tr>
+<tr><td class="c-item">1363</td><td class="c-desc">45KVA 208-208</td><td class="c-weight">640</td><td class="c-size">43&quot;Lx24&quot;Wx43&quot;H</td></tr>
+<tr><td class="c-item">1364</td><td class="c-desc">45KVA 240-208Y/120V 3P</td><td class="c-weight">623</td><td class="c-size">56&quot;Lx27&quot;Wx39&quot;H</td></tr>
+<tr><td class="c-item">1391</td><td class="c-desc">75KVA 3 Phase Motor Driven Regulator</td><td class="c-weight">740</td><td class="c-size">54&quot;Lx27&quot;Wx34&quot;H</td></tr>
+<tr><td class="c-item">1551</td><td class="c-desc">150KVA 480V-240V CT</td><td class="c-weight">1,486</td><td class="c-size">61&quot;Lx29&quot;Wx52&quot;H</td></tr>
+<tr><td class="c-item">1565</td><td class="c-desc">150KVA 208D-208Y</td><td class="c-weight">1,529</td><td class="c-size">61&quot;Lx33&quot;Wx55&quot;H</td></tr>
+<tr><td class="c-item">1569</td><td class="c-desc">15KVA 240V-208</td><td class="c-weight">331</td><td class="c-size">35&quot;Lx22&quot;Wx34&quot;H</td></tr>
+<tr><td class="c-item">1579</td><td class="c-desc">30KVA 208/208</td><td class="c-weight">531</td><td class="c-size">42&quot;Lx24&quot;Wx42&quot;H</td></tr>
+<tr><td class="c-item">1599</td><td class="c-desc">30KVA EURO 480V-380/220V</td><td class="c-weight">560</td><td class="c-size">49&quot;Lx22&quot;Wx43&quot;H</td></tr>
+<tr><td class="c-item">1664</td><td class="c-desc">10KVA ISO 208V</td><td class="c-weight">230</td><td class="c-size">27&quot;Lx19&quot;Wx28&quot;H</td></tr>
+<tr><td class="c-item">1691</td><td class="c-desc">45KVA ISO</td><td class="c-weight">608</td><td class="c-size">40&quot;Lx26&quot;Wx41&quot;H</td></tr>
+<tr><td class="c-item">1716</td><td class="c-desc">10KVA ISO 208</td><td class="c-weight">211</td><td class="c-size">27&quot;Lx19&quot;Wx29&quot;H</td></tr>
+<tr><td class="c-item">1717</td><td class="c-desc">10KVA ISO 208</td><td class="c-weight">214</td><td class="c-size">27&quot;Lx19&quot;Wx28&quot;H</td></tr>
+<tr><td class="c-item">1718</td><td class="c-desc">10KVA ISO 208</td><td class="c-weight">191</td><td class="c-size">27&quot;Lx19&quot;Wx29&quot;H</td></tr>
+<tr><td class="c-item">1752</td><td class="c-desc">75KVA 208D-208Y/120 ISO</td><td class="c-weight">906</td><td class="c-size">50&quot;Lx29&quot;Wx46&quot;H</td></tr>
+<tr><td class="c-item">1758</td><td class="c-desc">75KVA 240-208/120</td><td class="c-weight">1,031</td><td class="c-size">50&quot;Lx30&quot;Wx45&quot;H</td></tr>
+<tr><td class="c-item">1762</td><td class="c-desc">75KVA 208-208Y/120 ISO</td><td class="c-weight">817</td><td class="c-size">51&quot;Lx38&quot;Wx45&quot;H</td></tr>
+<tr><td class="c-item">1767</td><td class="c-desc">45KVA 208/240-380Y/220V</td><td class="c-weight">609</td><td class="c-size">48&quot;Lx26&quot;Wx39&quot;H</td></tr>
+<tr><td class="c-item">1773</td><td class="c-desc">45KVA 250-208/120Y 3o</td><td class="c-weight">776</td><td class="c-size">51&quot;Lx30&quot;Wx46&quot;H</td></tr>
+<tr><td class="c-item">1810</td><td class="c-desc">75KVA Regulator</td><td class="c-weight">826</td><td class="c-size">30&quot;Lx28&quot;Wx63&quot;H</td></tr>
+<tr><td class="c-item">1811</td><td class="c-desc">75KVA Regulator</td><td class="c-weight">826</td><td class="c-size">30&quot;Lx28&quot;Wx63&quot;H</td></tr>
+<tr><td class="c-item">1818</td><td class="c-desc">225KVA 480-240/120 3P with Stinger Leg</td><td class="c-weight">2,068</td><td class="c-size">76&quot;Lx35&quot;Wx62&quot;H</td></tr>
+<tr><td class="c-item">1877</td><td class="c-desc">75KVA Regulator</td><td class="c-weight">805</td><td class="c-size">30&quot;Lx28&quot;Wx63&quot;H</td></tr>
+<tr><td class="c-item">1919</td><td class="c-desc">150KVA 240/208-120</td><td class="c-weight">1,745</td><td class="c-size">64&quot;Lx38&quot;Wx63&quot;H</td></tr>
+<tr><td class="c-item">1929</td><td class="c-desc">30KVA ISO 208-208Y</td><td class="c-weight">522</td><td class="c-size">44&quot;Lx24&quot;Wx42&quot;H</td></tr>
+<tr><td class="c-item">1935</td><td class="c-desc">30KVA ISO 208-208/120</td><td class="c-weight">440</td><td class="c-size">42&quot;Lx18&quot;Wx40&quot;H</td></tr>
+<tr><td class="c-item">1940</td><td class="c-desc">45KVA 240-208Y/120</td><td class="c-weight">528</td><td class="c-size">42&quot;Lx25&quot;Wx44&quot;H</td></tr>
+<tr><td class="c-item">1942</td><td class="c-desc">30KVA ISO 208-208Y</td><td class="c-weight">434</td><td class="c-size">43&quot;L23&quot;Wx33&quot;H</td></tr>
+<tr><td class="c-item">1944</td><td class="c-desc">30KVA ISO 208-208Y </td><td class="c-weight">393</td><td class="c-size">43&quot;Lx19&quot;Wx32&quot;H</td></tr>
+<tr><td class="c-item">1995</td><td class="c-desc">75KVA ISO 208D-208Y/120</td><td class="c-weight">786</td><td class="c-size">47&quot;Lx25&quot;Wx49&quot;H</td></tr>
+<tr><td class="c-item">1997</td><td class="c-desc">50KVA 208D-208Y</td><td class="c-weight">596</td><td class="c-size">45&quot;Lx26&quot;Wx44&quot;H</td></tr>
+<tr><td class="c-item">1998</td><td class="c-desc">300KVA 480x208-208Y/120</td><td class="c-weight">2,477</td><td class="c-size">80&quot;Lx34&quot;Wx58&quot;H</td></tr>
+<tr><td class="c-item">1999</td><td class="c-desc">300KVA 480x208-208Y/120</td><td class="c-weight">2,807</td><td class="c-size">86&quot;Lx41&quot;Wx67&quot;H</td></tr>
+<tr><td class="c-item">11979</td><td class="c-desc">45KVA 208D-208Y/120</td><td class="c-weight">525</td><td class="c-size">43&quot;Lx23&quot;Wx37&quot;H</td></tr>
+<tr><td class="c-item">13455</td><td class="c-desc">225KVA 480/240 Step Down Stinger Leg</td><td class="c-weight">1,953</td><td class="c-size">74&quot;Lx35&quot;Wx64&quot;H</td></tr>
+<tr><td class="c-item">13741</td><td class="c-desc">45KVA ISO 208D-208Y/120</td><td class="c-weight">570</td><td class="c-size">47&quot;Lx21.5&quot;Wx31&quot;H</td></tr>
+<tr><td class="c-item">43646</td><td class="c-desc">30KVA 480V-208Y/120</td><td class="c-weight">410</td><td class="c-size">40.5&quot;Lx21&quot;Wx32.5&quot;H</td></tr>
+<tr><td class="c-item">44584</td><td class="c-desc">150KVA 240-480/277V</td><td class="c-weight">1,344</td><td class="c-size">60&quot;Lx30&quot;Wx59&quot;H</td></tr>
+<tr><td class="c-item">46090</td><td class="c-desc">300KVA 480V-208Y/120</td><td class="c-weight">2,682</td><td class="c-size">88&quot;Lx38&quot;Wx64&quot;H</td></tr>
+<tr><td class="c-item">46091</td><td class="c-desc">300KVA 480V-208Y/120</td><td class="c-weight">2,697</td><td class="c-size">75&quot;Lx44&quot;Wx65&quot;H</td></tr>
+<tr><td class="c-item">46341</td><td class="c-desc">300KVA 480V-208Y/120</td><td class="c-weight">2,361</td><td class="c-size">66&quot;Lx38&quot;Wx63&quot;H</td></tr>
+<tr><td class="c-item">46357</td><td class="c-desc">150KVA 480V-208Y/120</td><td class="c-weight">1,301</td><td class="c-size">52&quot;Lx34&quot;Wx59.5&quot;H</td></tr>
+<tr><td class="c-item">46358</td><td class="c-desc">300KVA 480V-208Y/120</td><td class="c-weight">2,489</td><td class="c-size">70.5&quot;Lx41&quot;Wx62.5&quot;H</td></tr>
+<tr><td class="c-item">46359</td><td class="c-desc">400KVA 480V-208Y/120</td><td class="c-weight">2,253</td><td class="c-size">66&quot;Lx39.5&quot;Wx63&quot;H</td></tr>
+<tr><td class="c-item">46360</td><td class="c-desc">300KVA 480V-208Y/120</td><td class="c-weight">2,708</td><td class="c-size">88&quot;Lx40&quot;Wx63&quot;H</td></tr>
+<tr><td class="c-item">46361</td><td class="c-desc">300KVA 480V-208Y/120</td><td class="c-weight">2,305</td><td class="c-size">74&quot;Lx38&quot;Wx63&quot;H</td></tr>
+<tr><td class="c-item">46362</td><td class="c-desc">300KVA 480V-208Y/120</td><td class="c-weight">2,845</td><td class="c-size">71&quot;Lx41&quot;Wx62&quot;H</td></tr>
+<tr><td class="c-item">46383</td><td class="c-desc">300KVA 480V-208Y/120</td><td class="c-weight">2,357</td><td class="c-size">66&quot;Lx39.5&quot;Wx63&quot;H</td></tr>
+<tr><td class="c-item">46389</td><td class="c-desc">45KVA 208D-208Y/120</td><td class="c-weight">742</td><td class="c-size">53&quot;Lx25&quot;Wx51&quot;H</td></tr>
+<tr><td class="c-item">46766</td><td class="c-desc">75KVA 208D-208Y/120 ISO</td><td class="c-weight">655</td><td class="c-size">48&quot;Lx24&quot;Wx41&quot;H</td></tr>
+<tr><td class="c-item">46767</td><td class="c-desc">75KVA 208-208Y/120 ISO</td><td class="c-weight">655</td><td class="c-size">48&quot;Lx24&quot;Wx41&quot;H</td></tr>
+<tr><td class="c-item">46768</td><td class="c-desc">75KVA ISO</td><td class="c-weight">639</td><td class="c-size">47&quot;Lx24&quot;Wx48&quot;H</td></tr>
+<tr><td class="c-item">47098</td><td class="c-desc">150KVA 480V-208Y/120</td><td class="c-weight">2,110</td><td class="c-size">68&quot;Lx37&quot;Wx62&quot;H</td></tr>
+<tr><td class="c-item">47099</td><td class="c-desc">150KVA 480V-208Y</td><td class="c-weight">1,971</td><td class="c-size">62&quot;Lx36.5W&quot;62.5&quot;H</td></tr>
+<tr><td class="c-item">47100</td><td class="c-desc">150KVA 480V-208Y</td><td class="c-weight">1,980</td><td class="c-size">62&quot;Lx36&quot;Wx63&quot;H</td></tr>
+<tr><td class="c-item">47101</td><td class="c-desc">75KVA 480V-208Y/120</td><td class="c-weight">968</td><td class="c-size">50&quot;Lx29&quot;Wx47&quot;H</td></tr>
+<tr><td class="c-item">47103</td><td class="c-desc">75KVA 480V-208Y/120</td><td class="c-weight">946</td><td class="c-size">50&quot;Lx29&quot;Wx47&quot;H</td></tr>
+<tr><td class="c-item">47153</td><td class="c-desc">300KVA 480V-208Y/120</td><td class="c-weight">2,810</td><td class="c-size">68&quot;Lx39&quot;Wx63&quot;H</td></tr>
+<tr><td class="c-item">48812</td><td class="c-desc">150KVA 208-208 ISO</td><td class="c-weight">1,796</td><td class="c-size">65.5&quot;Lx38&quot;W63.5&quot;H</td></tr>
+<tr><td class="c-item">48813</td><td class="c-desc">75KVA 240 </td><td class="c-weight">361</td><td class="c-size">42&quot;Lx23&quot;Wx35&quot;H</td></tr>
+<tr><td class="c-item">48814</td><td class="c-desc">75KVA 240-208</td><td class="c-weight">361</td><td class="c-size">42&quot;Lx23&quot;Wx35&quot;H</td></tr>
+<tr><td class="c-item">48816</td><td class="c-desc">150KVA 480-240V</td><td class="c-weight">1,419</td><td class="c-size">62&quot;Lx31&quot;Wx56&quot;H</td></tr>
+<tr><td class="c-item">48817</td><td class="c-desc">300KVA 480V-208Y/120</td><td class="c-weight">2,410</td><td class="c-size">85&quot;Lx41&quot;Wx63&quot;H</td></tr>
+<tr><td class="c-item">48818</td><td class="c-desc">75KVA 480V-208Y/120</td><td class="c-weight">724</td><td class="c-size">51&quot;Lx29.5&quot;Wx45.5&quot;H</td></tr>
+<tr><td class="c-item">49586</td><td class="c-desc">22KVA UPS 208V w/Batteries</td><td class="c-weight">1,030</td><td class="c-size">44&quot;Lx22&quot;Wx61&quot;H</td></tr>
+<tr><td class="c-item">49587</td><td class="c-desc">22KVA UPS 208V w/Batteries</td><td class="c-weight">1,030</td><td class="c-size">44&quot;Lx22&quot;Wx61&quot;H</td></tr>
+<tr><td class="c-item">49728</td><td class="c-desc">150KVA 480V-240Y/120</td><td class="c-weight">1,435</td><td class="c-size">61&quot;Lx35&quot;Wx63&quot;H</td></tr>
+<tr><td class="c-item">49778</td><td class="c-desc">150KVA 480V-208Y/120</td><td class="c-weight">1,958</td><td class="c-size">65&quot;Lx39&quot;Wx58&quot;H</td></tr>
+<tr><td class="c-item">49785</td><td class="c-desc">112.5KVA 240-208/120V</td><td class="c-weight">1,262</td><td class="c-size">59&quot;Lx28&quot;Wx58&quot;H</td></tr>
+<tr><td class="c-item">49786</td><td class="c-desc">75KVA 240-208Y/120</td><td class="c-weight">923</td><td class="c-size">47&quot;Lx27&quot;Wx54&quot;H</td></tr>
+<tr><td class="c-item">49869</td><td class="c-desc">50KVA ISO 208-208/240</td><td class="c-weight">519</td><td class="c-size">43&quot;Lx24&quot;Wx48&quot;H</td></tr>
+<tr><td class="c-item">50757</td><td class="c-desc">150KVA 120/208</td><td class="c-weight">1,343</td><td class="c-size">—</td></tr>
+<tr><td class="c-item">50759</td><td class="c-desc">150KVA 480-240/120V CT</td><td class="c-weight">1,401</td><td class="c-size">60&quot;Lx30&quot;Wx54&quot;H</td></tr>
+<tr><td class="c-item">51255</td><td class="c-desc">300KVA 480V-208Y/120</td><td class="c-weight">2,745</td><td class="c-size">81&quot;Lx40&quot;Wx62&quot;H</td></tr>
+<tr><td class="c-item">51278</td><td class="c-desc">300KVA 480V-208Y/120</td><td class="c-weight">2,466</td><td class="c-size">72&quot;Lx36&quot;Wx63&quot;H</td></tr>
+<tr><td class="c-item">51280</td><td class="c-desc">35KVA 480-208Y/120</td><td class="c-weight">454</td><td class="c-size">37&quot;Lx20&quot;Wx40&quot;H</td></tr>
+<tr><td class="c-item">51280</td><td class="c-desc">45KVA 480V-208Y/120</td><td class="c-weight">454</td><td class="c-size">37&quot;Lx20&quot;Wx40&quot;H</td></tr>
+<tr><td class="c-item">150K480208</td><td class="c-desc">Transformer 150KVA 480-208Y/120</td><td class="c-weight">1,980</td><td class="c-size">62&quot;Lx36&quot;Wx63&quot;H</td></tr>
+<tr><td class="c-item">45K480208</td><td class="c-desc">Transformer 45KVA 480-208Y/120</td><td class="c-weight">454</td><td class="c-size">37&quot;Lx20&quot;Wx40&quot;H</td></tr>
+<tr><td class="c-item">75K480208</td><td class="c-desc">Transformer 75KVA 480-208Y/120 - 47101</td><td class="c-weight">968</td><td class="c-size">50&quot;Lx29&quot;Wx47&quot;H</td></tr>
+<tr><td class="c-item">S112480208</td><td class="c-desc">Shielded Transformer 112.5KVA 480-208YB/120</td><td class="c-weight">1,294</td><td class="c-size">55&quot;Lx29&quot;Wx46&quot;H</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+
+  <section class="page" id="page-generators" style="--accent:#fb923c; --accentrgb:251,146,60;">
+    <div class="page-head">
+      <div class="page-head-left">
+        <span class="page-index">05 / 07</span>
+        <h2>GENERATORS</h2>
+      </div>
+      <div class="page-head-right">
+        <div class="stat"><span class="stat-num">48</span><span class="stat-label">ITEMS</span></div>
+        <div class="stat"><span class="stat-num">807,340</span><span class="stat-label">LBS TOTAL</span></div>
+      </div>
+    </div>
+    <div class="table-wrap">
+      <table>
+        <thead>
+          <tr><th class="th-item">ITEM #</th><th class="th-desc">DESCRIPTION</th><th class="th-weight">WEIGHT<br><span class="sub">lbs</span></th></tr>
+        </thead>
+        <tbody>
+          <tr><td class="c-item">14010</td><td class="c-desc">1600A Studio Quiet Generator -      14&#x27;5&quot;Lx7&#x27;6&quot;Wx9&#x27;5&quot;H</td><td class="c-weight">9,500</td></tr>
+<tr><td class="c-item">14011</td><td class="c-desc">1600A Studio Quiet Generator -      14&#x27;5&quot;Lx7&#x27;6&quot;Wx9&#x27;5&quot;H</td><td class="c-weight">9,500</td></tr>
+<tr><td class="c-item">14012</td><td class="c-desc">1600A Studio Quiet Generator -      14&#x27;5&quot;Lx7&#x27;6&quot;Wx9&#x27;5&quot;H</td><td class="c-weight">9,500</td></tr>
+<tr><td class="c-item">14013</td><td class="c-desc">1600A Studio Quiet Generator -      14&#x27;5&quot;Lx7&#x27;6&quot;Wx9&#x27;5&quot;H</td><td class="c-weight">9,500</td></tr>
+<tr><td class="c-item">14014</td><td class="c-desc">1600A Studio Quiet Generator -      14&#x27;5&quot;Lx7&#x27;6&quot;Wx9&#x27;5&quot;H</td><td class="c-weight">9,500</td></tr>
+<tr><td class="c-item">14015</td><td class="c-desc">1600A Studio Quiet Generator -      14&#x27;5&quot;Lx7&#x27;6&quot;Wx9&#x27;5&quot;H</td><td class="c-weight">9,500</td></tr>
+<tr><td class="c-item">14043</td><td class="c-desc">1600A Studio Quiet Generator -      14&#x27;5&quot;Lx7&#x27;6&quot;Wx9&#x27;5&quot;H</td><td class="c-weight">9,500</td></tr>
+<tr><td class="c-item">14044</td><td class="c-desc">1600A Studio Quiet Generator -      14&#x27;5&quot;Lx7&#x27;6&quot;Wx9&#x27;5&quot;H</td><td class="c-weight">9,500</td></tr>
+<tr><td class="c-item">14045</td><td class="c-desc">1600A Studio Quiet Generator -      14&#x27;5&quot;Lx7&#x27;6&quot;Wx9&#x27;5&quot;H</td><td class="c-weight">9,500</td></tr>
+<tr><td class="c-item">14046</td><td class="c-desc">1600A Studio Quiet Generator -      14&#x27;5&quot;Lx7&#x27;6&quot;Wx9&#x27;5&quot;H</td><td class="c-weight">9,500</td></tr>
+<tr><td class="c-item">14047</td><td class="c-desc">1600A Studio Quiet Generator -      14&#x27;5&quot;Lx7&#x27;6&quot;Wx9&#x27;5&quot;H</td><td class="c-weight">9,500</td></tr>
+<tr><td class="c-item">14048</td><td class="c-desc">1600A Studio Quiet Generator -      14&#x27;5&quot;Lx7&#x27;6&quot;Wx9&#x27;5&quot;H</td><td class="c-weight">9,500</td></tr>
+<tr><td class="c-item">16010</td><td class="c-desc">1600A Studio Quiet Generator -      14&#x27;5&quot;Lx7&#x27;6&quot;Wx9&#x27;5&quot;H</td><td class="c-weight">9,500</td></tr>
+<tr><td class="c-item">16011</td><td class="c-desc">1600A Studio Quiet Generator -      14&#x27;5&quot;Lx7&#x27;6&quot;Wx9&#x27;5&quot;H</td><td class="c-weight">9,500</td></tr>
+<tr><td class="c-item">25010</td><td class="c-desc">300KW Studio Quiet Generator -      18&#x27;4&quot;Lx8&#x27;Wx11&#x27;2&quot;H</td><td class="c-weight">16,000</td></tr>
+<tr><td class="c-item">25011</td><td class="c-desc">300KW Studio Quiet Generator -      18&#x27;4&quot;Lx8&#x27;Wx11&#x27;2&quot;H</td><td class="c-weight">16,000</td></tr>
+<tr><td class="c-item">25012</td><td class="c-desc">300KW Studio Quiet Generator -      18&#x27;4&quot;Lx8&#x27;Wx11&#x27;2&quot;H</td><td class="c-weight">17,300</td></tr>
+<tr><td class="c-item">25013</td><td class="c-desc">300KW Studio Quiet Generator -      18&#x27;4&quot;Lx8&#x27;Wx11&#x27;2&quot;H</td><td class="c-weight">17,300</td></tr>
+<tr><td class="c-item">25014</td><td class="c-desc">300KW Studio Quiet Generator -      18&#x27;4&quot;Lx8&#x27;Wx11&#x27;2&quot;H</td><td class="c-weight">17,300</td></tr>
+<tr><td class="c-item">25015</td><td class="c-desc">300KW Studio Quiet Generator -      18&#x27;4&quot;Lx8&#x27;Wx11&#x27;2&quot;H</td><td class="c-weight">17,300</td></tr>
+<tr><td class="c-item">25016</td><td class="c-desc">300KW Studio Quiet Generator -      18&#x27;4&quot;Lx8&#x27;Wx11&#x27;2&quot;H</td><td class="c-weight">17,300</td></tr>
+<tr><td class="c-item">25017</td><td class="c-desc">300KW Studio Quiet Generator -      18&#x27;4&quot;Lx8&#x27;Wx11&#x27;2&quot;H</td><td class="c-weight">17,300</td></tr>
+<tr><td class="c-item">25018</td><td class="c-desc">300KW Studio Quiet Generator -      18&#x27;4&quot;Lx8&#x27;Wx11&#x27;2&quot;H</td><td class="c-weight">17,300</td></tr>
+<tr><td class="c-item">25019</td><td class="c-desc">300KW Studio Quiet Generator -      18&#x27;4&quot;Lx8&#x27;Wx11&#x27;2&quot;H</td><td class="c-weight">17,300</td></tr>
+<tr><td class="c-item">25020</td><td class="c-desc">300KW Studio Quiet Generator -      18&#x27;4&quot;Lx8&#x27;Wx11&#x27;2&quot;H</td><td class="c-weight">17,300</td></tr>
+<tr><td class="c-item">25021</td><td class="c-desc">300KW Studio Quiet Generator -      18&#x27;4&quot;Lx8&#x27;Wx11&#x27;2&quot;H</td><td class="c-weight">17,300</td></tr>
+<tr><td class="c-item">25022</td><td class="c-desc">300KW Studio Quiet Generator -      18&#x27;4&quot;Lx8&#x27;Wx11&#x27;2&quot;H</td><td class="c-weight">17,300</td></tr>
+<tr><td class="c-item">25029</td><td class="c-desc">300KW Studio Quiet Generator -      18&#x27;4&quot;Lx8&#x27;Wx11&#x27;2&quot;H</td><td class="c-weight">16,000</td></tr>
+<tr><td class="c-item">25030</td><td class="c-desc">300KW Studio Quiet Generator -      18&#x27;4&quot;Lx8&#x27;Wx11&#x27;2&quot;H</td><td class="c-weight">16,000</td></tr>
+<tr><td class="c-item">35010/35011</td><td class="c-desc">350KW Twin Pack Generators -      40&#x27;Lx8&#x27;Wx13&#x27;H</td><td class="c-weight">34,000</td></tr>
+<tr><td class="c-item">42010</td><td class="c-desc">4200A Studio Quiet Generator -     24&#x27;Lx8&#x27;Wx13&#x27;H</td><td class="c-weight">31,000</td></tr>
+<tr><td class="c-item">42012</td><td class="c-desc">4200A Studio Quiet Generator -     24&#x27;Lx8&#x27;Wx13&#x27;H</td><td class="c-weight">31,000</td></tr>
+<tr><td class="c-item">50010</td><td class="c-desc">600KW Studio Quiet Generator -     24&#x27;Lx8&#x27;Wx13&#x27;H</td><td class="c-weight">36,020</td></tr>
+<tr><td class="c-item">50011</td><td class="c-desc">600KW Studio Quiet Generator -     24&#x27;Lx8&#x27;Wx13&#x27;H</td><td class="c-weight">36,020</td></tr>
+<tr><td class="c-item">50013</td><td class="c-desc">600KW Studio Quiet Generator -     24&#x27;Lx8&#x27;Wx13&#x27;H</td><td class="c-weight">34,000</td></tr>
+<tr><td class="c-item">50014</td><td class="c-desc">600KW Studio Quiet Generator -     24&#x27;Lx8&#x27;Wx13&#x27;H</td><td class="c-weight">34,000</td></tr>
+<tr><td class="c-item">50015</td><td class="c-desc">600KW Studio Quiet Generator -     24&#x27;Lx8&#x27;Wx13&#x27;H</td><td class="c-weight">34,000</td></tr>
+<tr><td class="c-item">50016</td><td class="c-desc">600KW Studio Quiet Generator -     24&#x27;Lx8&#x27;Wx13&#x27;H</td><td class="c-weight">34,000</td></tr>
+<tr><td class="c-item">50019</td><td class="c-desc">600KW Studio Quiet Generator -     24&#x27;Lx8&#x27;Wx13&#x27;H</td><td class="c-weight">34,000</td></tr>
+<tr><td class="c-item">50022</td><td class="c-desc">600KW Studio Quiet Generator -     24&#x27;Lx8&#x27;Wx13&#x27;H</td><td class="c-weight">34,000</td></tr>
+<tr><td class="c-item">5010</td><td class="c-desc">500A Studio Quiet Generator -     14&#x27;Lx7&#x27;Wx7&#x27;H</td><td class="c-weight">6,000</td></tr>
+<tr><td class="c-item">5011</td><td class="c-desc">500A Studio Quiet Generator -     14&#x27;Lx7&#x27;Wx7&#x27;H</td><td class="c-weight">6,000</td></tr>
+<tr><td class="c-item">5012</td><td class="c-desc">500A Studio Quiet Generator -     14&#x27;Lx7&#x27;Wx7&#x27;H</td><td class="c-weight">6,000</td></tr>
+<tr><td class="c-item">5013</td><td class="c-desc">500A Studio Quiet Generator -     14&#x27;Lx7&#x27;Wx7&#x27;H</td><td class="c-weight">6,000</td></tr>
+<tr><td class="c-item">5014</td><td class="c-desc">500A Studio Quiet Generator -     14&#x27;Lx7&#x27;Wx7&#x27;H</td><td class="c-weight">6,000</td></tr>
+<tr><td class="c-item">5015</td><td class="c-desc">500A Studio Quiet Generator -     14&#x27;Lx7&#x27;Wx7&#x27;H</td><td class="c-weight">6,000</td></tr>
+<tr><td class="c-item">5016</td><td class="c-desc">500A Studio Quiet Generator -     14&#x27;Lx7&#x27;Wx7&#x27;H</td><td class="c-weight">6,000</td></tr>
+<tr><td class="c-item">5017</td><td class="c-desc">500A Studio Quiet Generator -     14&#x27;Lx7&#x27;Wx7&#x27;H</td><td class="c-weight">6,000</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+
+  <section class="page" id="page-power" style="--accent:#22d3ee; --accentrgb:34,211,238;">
+    <div class="page-head">
+      <div class="page-head-left">
+        <span class="page-index">06 / 07</span>
+        <h2>POWER SYSTEMS</h2>
+      </div>
+      <div class="page-head-right">
+        <div class="stat"><span class="stat-num">14</span><span class="stat-label">ITEMS</span></div>
+        <div class="stat"><span class="stat-num">0</span><span class="stat-label">LBS TOTAL</span></div>
+      </div>
+    </div>
+    <div class="table-wrap">
+      <table>
+        <thead>
+          <tr><th class="th-item">ITEM #</th><th class="th-desc">DESCRIPTION</th><th class="th-weight">WEIGHT<br><span class="sub">lbs</span></th></tr>
+        </thead>
+        <tbody>
+          <tr><td class="c-item">UPS10</td><td class="c-desc">Uninterruptable Power Supply</td><td class="c-weight">—</td></tr>
+<tr><td class="c-item">UPS13</td><td class="c-desc">—</td><td class="c-weight">—</td></tr>
+<tr><td class="c-item">UPS18</td><td class="c-desc">—</td><td class="c-weight">—</td></tr>
+<tr><td class="c-item">UPS510</td><td class="c-desc">—</td><td class="c-weight">—</td></tr>
+<tr><td class="c-item">PDS4</td><td class="c-desc">Power Distribution System - </td><td class="c-weight">—</td></tr>
+<tr><td class="c-item">PDS6</td><td class="c-desc">—</td><td class="c-weight">—</td></tr>
+<tr><td class="c-item">PDS8</td><td class="c-desc">Power Distribution System -     34&#x27;Lx8&#x27;4&quot;Wx</td><td class="c-weight">—</td></tr>
+<tr><td class="c-item">PDS9</td><td class="c-desc">Power Distribution System -     30&#x27;Lx8&#x27;4&quot;Wx</td><td class="c-weight">—</td></tr>
+<tr><td class="c-item">PDS16</td><td class="c-desc">—</td><td class="c-weight">—</td></tr>
+<tr><td class="c-item">PDS17</td><td class="c-desc">—</td><td class="c-weight">—</td></tr>
+<tr><td class="c-item">PDS19</td><td class="c-desc">—</td><td class="c-weight">—</td></tr>
+<tr><td class="c-item">POD610</td><td class="c-desc">—</td><td class="c-weight">—</td></tr>
+<tr><td class="c-item">POD611</td><td class="c-desc">—</td><td class="c-weight">—</td></tr>
+<tr><td class="c-item">POD614</td><td class="c-desc">—</td><td class="c-weight">—</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+
+  <section class="page" id="page-misc" style="--accent:#f472b6; --accentrgb:244,114,182;">
+    <div class="page-head">
+      <div class="page-head-left">
+        <span class="page-index">07 / 07</span>
+        <h2>MISC & AC UNITS</h2>
+      </div>
+      <div class="page-head-right">
+        <div class="stat"><span class="stat-num">30</span><span class="stat-label">ITEMS</span></div>
+        <div class="stat"><span class="stat-num">8,301</span><span class="stat-label">LBS TOTAL</span></div>
+      </div>
+    </div>
+    <div class="table-wrap">
+      <table>
+        <thead>
+          <tr><th class="th-item">ITEM #</th><th class="th-desc">DESCRIPTION</th><th class="th-weight">WEIGHT<br><span class="sub">lbs</span></th></tr>
+        </thead>
+        <tbody>
+          <tr><td class="c-item">ADARAMP</td><td class="c-desc">ADA Ramp (Per Piece, not set of 2)</td><td class="c-weight">17</td></tr>
+<tr><td class="c-item">CROSSOVER</td><td class="c-desc">Cable Crossovers</td><td class="c-weight">35</td></tr>
+<tr><td class="c-item">CROSSWEDGE</td><td class="c-desc">Crossover Wedges</td><td class="c-weight">17</td></tr>
+<tr><td class="c-item">CONTAINMEN</td><td class="c-desc">Fuel Containment</td><td class="c-weight">56</td></tr>
+<tr><td class="c-item">CACART</td><td class="c-desc">Cable Cart</td><td class="c-weight">90</td></tr>
+<tr><td class="c-item">HCTAB</td><td class="c-desc">ADA Blue Ramp Tab</td><td class="c-weight">1</td></tr>
+<tr><td class="c-item">TACOCART</td><td class="c-desc">Taco Cart</td><td class="c-weight">221</td></tr>
+<tr><td class="c-item">LADARAMPF</td><td class="c-desc">Linebacker Female ADA Ramp</td><td class="c-weight">35</td></tr>
+<tr><td class="c-item">LADARAMPM</td><td class="c-desc">Lineback Male ADA Ramp</td><td class="c-weight">35</td></tr>
+<tr><td class="c-item">LCROSSOVER</td><td class="c-desc">Linebacker Heavy Duty Crossover</td><td class="c-weight">17</td></tr>
+<tr><td class="c-item">SHOOKS</td><td class="c-desc">S Hooks</td><td class="c-weight">2</td></tr>
+<tr><td class="c-item">MISC</td><td class="c-desc">Miscellaneous</td><td class="c-weight">—</td></tr>
+<tr><td class="c-item">BLUE</td><td class="c-desc">Blue Hamper</td><td class="c-weight">160</td></tr>
+<tr><td class="c-item">ROAD</td><td class="c-desc">Road Pack</td><td class="c-weight">153</td></tr>
+<tr><td class="c-item">PALLET</td><td class="c-desc">Pallet</td><td class="c-weight">50</td></tr>
+<tr><td class="c-item">PORT-AC-2</td><td class="c-desc">2 Ton AC Unit</td><td class="c-weight">350</td></tr>
+<tr><td class="c-item">50653</td><td class="c-desc">2 Ton AC Unit</td><td class="c-weight">350</td></tr>
+<tr><td class="c-item">50654</td><td class="c-desc">2 Ton AC Unit</td><td class="c-weight">350</td></tr>
+<tr><td class="c-item">50723</td><td class="c-desc">2 Ton AC Unit</td><td class="c-weight">350</td></tr>
+<tr><td class="c-item">50724</td><td class="c-desc">2 Ton AC Unit</td><td class="c-weight">350</td></tr>
+<tr><td class="c-item">51281</td><td class="c-desc">2 Ton AC Unit</td><td class="c-weight">350</td></tr>
+<tr><td class="c-item">51282</td><td class="c-desc">2 Ton AC Unit</td><td class="c-weight">350</td></tr>
+<tr><td class="c-item">51283</td><td class="c-desc">2 Ton AC Unit</td><td class="c-weight">350</td></tr>
+<tr><td class="c-item">51284</td><td class="c-desc">2 Ton AC Unit</td><td class="c-weight">350</td></tr>
+<tr><td class="c-item">43758</td><td class="c-desc">2.5 Ton AC Unit</td><td class="c-weight">331</td></tr>
+<tr><td class="c-item">48252</td><td class="c-desc">2.5 Ton AC Unit</td><td class="c-weight">331</td></tr>
+<tr><td class="c-item">PORTAC5T</td><td class="c-desc">5 Ton AC Unit</td><td class="c-weight">900</td></tr>
+<tr><td class="c-item">48808</td><td class="c-desc">5 Ton AC Unit</td><td class="c-weight">900</td></tr>
+<tr><td class="c-item">48809</td><td class="c-desc">5 Ton AC Unit</td><td class="c-weight">900</td></tr>
+<tr><td class="c-item">51194</td><td class="c-desc">5 Ton AC Unit</td><td class="c-weight">900</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+</div>
+
+<footer>
+  All weights in pounds (lbs) &nbsp;·&nbsp; Hamper and Road Pack totals include container tare weight<br>
+  Saunders Electric Full Inventory Weight Reference &nbsp;·&nbsp; For internal logistics and load planning use
+  <div class="warn">Verify weights before loading — actual weights may vary by manufacturer lot</div>
+</footer>
+
+<script>
+const buttons = document.querySelectorAll('.navbtn');
+const pages = document.querySelectorAll('.page');
+buttons.forEach(btn => {
+  btn.addEventListener('click', () => {
+    const target = btn.dataset.target;
+    pages.forEach(p => p.classList.toggle('active', p.id === 'page-' + target));
+    buttons.forEach(b => b.classList.toggle('active', b === btn));
+    window.scrollTo({top: document.getElementById('nav').offsetTop - 10, behavior: 'smooth'});
+  });
+});
+buttons[0].classList.add('active');
+</script>
+
+</body>
+</html>
