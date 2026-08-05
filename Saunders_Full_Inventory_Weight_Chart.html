@@ -223,6 +223,88 @@ footer {
 }
 footer .warn { color: #f59e0b; margin-top: 4px; }
 
+/* Lock screen */
+#lockscreen {
+  position: fixed;
+  inset: 0;
+  z-index: 999;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--bg);
+  background-image:
+    radial-gradient(circle at 15% 10%, rgba(60,70,140,0.18), transparent 45%),
+    radial-gradient(circle at 85% 90%, rgba(60,70,140,0.14), transparent 45%);
+  padding: 20px;
+}
+.lockbox {
+  width: 100%;
+  max-width: 360px;
+  text-align: center;
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  padding: 40px 32px;
+  background: linear-gradient(180deg, #0d1230 0%, #0a0e27 100%);
+  box-shadow: 0 0 40px rgba(0,0,0,0.5);
+}
+.lock-brand {
+  font-family: 'Oswald', sans-serif;
+  font-size: 11px;
+  letter-spacing: 3px;
+  color: var(--muted);
+  margin-bottom: 14px;
+}
+.lock-icon { font-size: 30px; margin-bottom: 10px; }
+.lockbox h2 {
+  font-family: 'Oswald', sans-serif;
+  font-size: 22px;
+  letter-spacing: 1px;
+  color: var(--gold);
+  margin-bottom: 8px;
+}
+.lockbox p {
+  color: var(--muted);
+  font-size: 13px;
+  margin-bottom: 22px;
+  line-height: 1.5;
+}
+#lockpw {
+  width: 100%;
+  padding: 12px 14px;
+  border-radius: 7px;
+  border: 1px solid var(--border);
+  background: #060815;
+  color: var(--text);
+  font-size: 15px;
+  margin-bottom: 14px;
+  outline: none;
+  text-align: center;
+  letter-spacing: 1px;
+}
+#lockpw:focus { border-color: var(--gold); }
+#lockbtn {
+  width: 100%;
+  padding: 12px 14px;
+  border-radius: 7px;
+  border: none;
+  background: var(--gold);
+  color: #0a0e27;
+  font-family: 'Oswald', sans-serif;
+  font-weight: 600;
+  font-size: 14px;
+  letter-spacing: 1px;
+  cursor: pointer;
+  transition: opacity 0.15s ease;
+}
+#lockbtn:hover { opacity: 0.88; }
+#lockerr {
+  display: none;
+  color: #f87171;
+  font-size: 12.5px;
+  margin-top: 12px;
+}
+#lockerr.show { display: block; }
+
 /* Print */
 @media print {
   .nav { display: none; }
@@ -235,16 +317,28 @@ footer .warn { color: #f59e0b; margin-top: 4px; }
 </head>
 <body>
 
-<div class="masthead">
+<div id="lockscreen">
+  <div class="lockbox">
+    <div class="lock-brand">SAUNDERS ELECTRIC</div>
+    <div class="lock-icon">&#128274;</div>
+    <h2>Inventory Access</h2>
+    <p>Enter password to view the equipment weight chart.</p>
+    <input type="password" id="lockpw" placeholder="Password" autocomplete="off">
+    <button id="lockbtn">Unlock</button>
+    <div id="lockerr">Incorrect password. Try again.</div>
+  </div>
+</div>
+
+<div class="masthead mainapp" style="display:none;">
   <div class="brandline">SAUNDERS ELECTRIC &nbsp;·&nbsp; LOGISTICS &amp; LOAD PLANNING</div>
   <h1>FULL EQUIPMENT INVENTORY WEIGHT CHART</h1>
 </div>
 
-<nav class="nav" id="nav">
+<nav class="nav mainapp" id="nav" style="display:none;">
   <button class="navbtn" data-target="switches" style="--accent:#fbbf24"><span class="navnum">01</span>SWITCHES<span class="navcount">54 items</span></button><button class="navbtn" data-target="distro" style="--accent:#60a5fa"><span class="navnum">02</span>DISTRO BOXES<span class="navcount">67 items</span></button><button class="navbtn" data-target="cable" style="--accent:#4ade80"><span class="navnum">03</span>CABLE<span class="navcount">50 items</span></button><button class="navbtn" data-target="transformers" style="--accent:#c084fc"><span class="navnum">04</span>TRANSFORMERS<span class="navcount">103 items</span></button><button class="navbtn" data-target="generators" style="--accent:#fb923c"><span class="navnum">05</span>GENERATORS<span class="navcount">52 items</span></button><button class="navbtn" data-target="power" style="--accent:#22d3ee"><span class="navnum">06</span>POWER SYSTEMS<span class="navcount">14 items</span></button><button class="navbtn" data-target="misc" style="--accent:#f472b6"><span class="navnum">07</span>MISC & AC UNITS<span class="navcount">30 items</span></button>
 </nav>
 
-<div class="container" id="pages">
+<div class="container mainapp" id="pages" style="display:none;">
   
   <section class="page active" id="page-switches" style="--accent:#fbbf24; --accentrgb:251,191,36;">
     <div class="page-head">
@@ -778,13 +872,49 @@ footer .warn { color: #f59e0b; margin-top: 4px; }
 
 </div>
 
-<footer>
+<footer class="mainapp" style="display:none;">
   All weights in pounds (lbs) &nbsp;·&nbsp; Hamper and Road Pack totals include container tare weight<br>
   Saunders Electric Full Inventory Weight Reference &nbsp;·&nbsp; For internal logistics and load planning use
   <div class="warn">Verify weights before loading — actual weights may vary by manufacturer lot</div>
 </footer>
 
 <script>
+// --- Password gate ---
+const CORRECT_HASH = "d53412055387cd006f1fb1b4b1db186bede7f23c04184b4c94a82ae7bb9a6e2f";
+const UNLOCK_KEY = "saunders_inventory_unlocked";
+
+async function sha256(text) {
+  const enc = new TextEncoder().encode(text);
+  const buf = await crypto.subtle.digest('SHA-256', enc);
+  return Array.from(new Uint8Array(buf)).map(b => b.toString(16).padStart(2,'0')).join('');
+}
+
+function showApp() {
+  document.getElementById('lockscreen').style.display = 'none';
+  document.querySelectorAll('.mainapp').forEach(el => el.style.display = '');
+}
+
+async function tryUnlock() {
+  const val = document.getElementById('lockpw').value;
+  const hash = await sha256(val);
+  if (hash === CORRECT_HASH) {
+    localStorage.setItem(UNLOCK_KEY, '1');
+    showApp();
+  } else {
+    document.getElementById('lockerr').classList.add('show');
+  }
+}
+
+if (localStorage.getItem(UNLOCK_KEY) === '1') {
+  showApp();
+} else {
+  document.getElementById('lockbtn').addEventListener('click', tryUnlock);
+  document.getElementById('lockpw').addEventListener('keydown', e => {
+    if (e.key === 'Enter') tryUnlock();
+  });
+  document.getElementById('lockpw').focus();
+}
+
 const buttons = document.querySelectorAll('.navbtn');
 const pages = document.querySelectorAll('.page');
 buttons.forEach(btn => {
